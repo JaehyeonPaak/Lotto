@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.core.view.size
 
@@ -95,25 +96,30 @@ class MainActivity : AppCompatActivity() {
 
     private fun initRunButton() {
         runButton.setOnClickListener {
-            val list = getRandomNumber()
+            val list = getRandomNumber() //list that contains Int elements...
             Log.d("Random Number List", list.toString())
             didRun = true
-            var j = 0
-            for(i in list) {
-                numberTextViewList[j].text = i.toString()
-                numberTextViewList[j].isVisible = true
-                j++
+            list.forEachIndexed { index, i ->
+                val textView = numberTextViewList[index]
+                textView.text = i.toString()
+                textView.isVisible = true
             }
         }
     }
 
     private fun getRandomNumber(): List<Int> {
         val numberlist = mutableListOf<Int>()
+        if(numberPickerList.size > 5) {
+            numberPickerList.clear()
+        }
         for (i in 1..45) {
+            if(numberPickerList.contains(i)) {
+                continue
+            }
             numberlist.add(i)
         }
         numberlist.shuffle()
-        return numberlist.subList(0, 6).sorted()
+        return numberPickerList.toList() + numberlist.subList(0, 6 - numberPickerList.size).sorted()
     }
 
 }
